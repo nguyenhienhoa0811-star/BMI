@@ -3,211 +3,263 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hệ Thống Dinh Dưỡng Thịnh Vượng - Final Fix</title>
+    <title>Prosperity Health System - Professional Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         :root {
-            --primary-green: #2e7d32;
-            --light-green: #e8f5e9;
-            --accent-green: #4caf50;
-            --text-dark: #1b5e20;
-            --white: #ffffff;
-            --danger: #d32f2f;
-            --warning: #fbc02d;
+            --primary: #10b981; /* Emerald Green */
+            --primary-dark: #065f46;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #1e293b;
+            --danger: #ef4444;
+            --warning: #f59e0b;
         }
 
+        * { box-sizing: border-box; }
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f2f0;
-            color: #222;
+            font-family: 'Inter', Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
             margin: 0;
-            padding: 15px;
+            padding: 20px;
+            line-height: 1.6;
         }
 
         .container {
-            max-width: 850px;
+            max-width: 900px;
             margin: auto;
-            background: var(--white);
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            background: var(--card);
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
         }
 
-        .header-banner {
-            background: linear-gradient(135deg, var(--primary-green), var(--accent-green));
-            color: white;
-            padding: 20px;
-            border-radius: 12px;
+        /* Header phong cách App quốc tế */
+        .header {
             text-align: center;
-            margin-bottom: 25px;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e2e8f0;
         }
+        .header h1 {
+            color: var(--primary-dark);
+            font-size: 28px;
+            font-weight: 800;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: -0.025em;
+        }
+        .header p { color: #64748b; margin: 5px 0 0; }
 
-        h1 { margin: 0; font-size: 20px; text-transform: uppercase; }
-        h3 { color: var(--primary-green); border-left: 5px solid var(--primary-green); padding-left: 10px; margin-top: 25px; }
+        /* Form nhập liệu */
+        .section-title {
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--primary);
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .grid-inputs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .input-box { display: flex; flex-direction: column; }
+        label { font-size: 13px; font-weight: 600; margin-bottom: 6px; color: #475569; }
+        input, select {
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            font-size: 15px;
+            transition: all 0.2s;
+        }
+        input:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1); }
 
-        .form-section { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
-        .input-group { display: flex; flex-direction: column; }
-        label { font-weight: bold; margin-bottom: 5px; font-size: 14px; }
-        input, select { padding: 10px; border: 1px solid #ccc; border-radius: 8px; }
-
-        .btn-main {
-            background: var(--primary-green);
+        .btn-calc {
+            background: var(--primary);
             color: white;
             border: none;
-            padding: 15px;
-            border-radius: 10px;
+            padding: 18px;
+            border-radius: 15px;
             font-size: 16px;
-            font-weight: bold;
+            font-weight: 700;
             cursor: pointer;
             width: 100%;
+            box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.2);
+            transition: transform 0.2s;
         }
+        .btn-calc:hover { transform: translateY(-2px); background: var(--primary-dark); }
 
-        /* BÁO ĐỘNG BMI */
-        .alert-card { padding: 15px; border-radius: 10px; text-align: center; margin: 15px 0; font-weight: bold; }
-        .status-danger { background: #ffebee; color: var(--danger); border: 1px solid var(--danger); }
-        .status-warning { background: #fffde7; color: #856404; border: 1px solid var(--warning); }
-        .status-success { background: #e8f5e9; color: var(--primary-green); border: 1px solid var(--primary-green); }
+        /* Báo động BMI */
+        .status-badge {
+            padding: 20px;
+            border-radius: 16px;
+            text-align: center;
+            font-weight: 800;
+            margin: 20px 0;
+            font-size: 18px;
+            border: 2px solid transparent;
+        }
+        .healthy { background: #ecfdf5; color: #065f46; border-color: #10b981; }
+        .alert { background: #fef2f2; color: #991b1b; border-color: #ef4444; }
+        .warn { background: #fffbeb; color: #92400e; border-color: #f59e0b; }
 
+        /* Vùng kết quả */
         #result-area { display: none; }
+        .macro-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 25px 0;
+        }
+        .macro-card {
+            background: #f1f5f9;
+            padding: 15px;
+            border-radius: 16px;
+            text-align: center;
+        }
+        .macro-card span { display: block; font-size: 20px; font-weight: 800; color: var(--primary-dark); }
+        .macro-card label { font-size: 11px; text-transform: uppercase; color: #64748b; }
 
-        /* MACRO GRID */
-        .macro-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 15px 0; }
-        .macro-item { background: var(--light-green); padding: 10px; border-radius: 8px; text-align: center; border: 1px solid var(--accent-green); }
-        .macro-val { display: block; font-size: 18px; font-weight: bold; color: var(--primary-green); }
-
-        /* TABLE TRONG PDF */
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { border: 1px solid #333; padding: 8px; font-size: 13px; text-align: left; color: #000; }
-        th { background: #f2f2f2; }
+        /* Table định dạng PDF */
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; overflow: hidden; border-radius: 12px; }
+        th { background: #f1f5f9; color: #475569; font-size: 12px; padding: 12px; text-align: left; border: 1px solid #e2e8f0; }
+        td { padding: 12px; font-size: 13px; border: 1px solid #e2e8f0; color: #1e293b; }
 
         .btn-pdf {
-            background: #222;
+            background: #1e293b;
             color: white;
-            padding: 15px;
-            border-radius: 10px;
+            padding: 16px;
+            border-radius: 12px;
             width: 100%;
             border: none;
+            font-weight: 700;
+            margin-top: 30px;
             cursor: pointer;
-            font-weight: bold;
-            margin-top: 20px;
         }
 
-        /* FIX PDF TRUNCATION - Đảm bảo PDF load hết */
-        #printable-content {
-            background: white;
-            width: 100% !important;
-            overflow: visible !important;
-            height: auto !important;
+        /* Vùng In PDF - Đảm bảo font chữ đen đậm khi in */
+        #pdf-export-container { padding: 20px; background: white; }
+        .page-break { page-break-after: always; }
+        
+        @media (max-width: 600px) {
+            .grid-inputs { grid-template-columns: 1fr; }
+            .macro-container { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="header-banner">
-        <h1>Health & Prosperity Digital System</h1>
-        <p style="margin:5px 0 0; font-size: 13px;">Thiết kế vóc dáng kỷ luật 28 ngày</p>
+    <div class="header">
+        <h1>Prosperity Health System</h1>
+        <p>Hệ thống Thiết kế Vóc dáng & Dinh dưỡng Chuyên sâu</p>
     </div>
 
-    <div style="background: #fdfdfd; padding: 20px; border-radius: 10px; border: 1px solid #eee;">
-        <div class="input-group" style="margin-bottom: 15px;">
-            <label>Họ và Tên:</label>
-            <input type="text" id="custName" placeholder="Tên khách hàng">
-        </div>
-        <div class="form-section">
-            <div class="input-group"><label>Chiều cao (cm):</label><input type="number" id="height" value="165"></div>
-            <div class="input-group"><label>Cân nặng (kg):</label><input type="number" id="weight" value="80"></div>
-            <div class="input-group"><label>Tuổi:</label><input type="number" id="age" value="42"></div>
-            <div class="input-group">
-                <label>Giới tính:</label>
-                <select id="gender"><option value="male">Nam</option><option value="female">Nữ</option></select>
-            </div>
-        </div>
-        <div class="form-section">
-            <div class="input-group">
-                <label>Vận động:</label>
-                <select id="activity">
-                    <option value="1.2">Ít vận động</option>
-                    <option value="1.55" selected>Vừa (3-5 buổi)</option>
-                    <option value="1.725">Nặng (6-7 buổi)</option>
-                </select>
-            </div>
-            <div class="input-group">
-                <label>Mục tiêu:</label>
-                <select id="goal">
-                    <option value="-500">Giảm mỡ</option>
-                    <option value="0">Giữ dáng</option>
-                    <option value="500">Tăng cơ</option>
-                </select>
-            </div>
-        </div>
-        <button class="btn-main" onclick="processData()">PHÂN TÍCH & LẬP KẾ HOẠCH</button>
+    <div class="section-title"><span>●</span> I. Thông Tin Khách Hàng</div>
+    <div class="input-box" style="margin-bottom: 20px;">
+        <label>Họ và Tên khách hàng</label>
+        <input type="text" id="custName" placeholder="Ví dụ: Nguyễn Thị A">
     </div>
+    
+    <div class="grid-inputs">
+        <div class="input-box"><label>Chiều cao (cm)</label><input type="number" id="height" value="165"></div>
+        <div class="input-box"><label>Cân nặng (kg)</label><input type="number" id="weight" value="65"></div>
+        <div class="input-box"><label>Tuổi</label><input type="number" id="age" value="30"></div>
+        <div class="input-group">
+            <label>Giới tính</label>
+            <select id="gender" style="width:100%"><option value="male">Nam</option><option value="female">Nữ</option></select>
+        </div>
+    </div>
+
+    <div class="grid-inputs">
+        <div class="input-box">
+            <label>Mức độ vận động</label>
+            <select id="activity">
+                <option value="1.2">Ít vận động</option>
+                <option value="1.55" selected>Vận động vừa (3-5 buổi)</option>
+                <option value="1.725">Vận động nặng</option>
+            </select>
+        </div>
+        <div class="input-box">
+            <label>Mục tiêu chiến lược</label>
+            <select id="goal">
+                <option value="-500">Giảm mỡ nhanh</option>
+                <option value="0">Duy trì vóc dáng</option>
+                <option value="500">Tăng cơ - Tăng cân</option>
+            </select>
+        </div>
+    </div>
+
+    <button class="btn-calc" onclick="calculatePlan()">PHÂN TÍCH & TẠO BÁO CÁO</button>
 
     <div id="result-area">
-        <div id="printable-content">
-            <h2 style="text-align: center; color: #2e7d32; margin-top: 30px;">KẾ HOẠCH DINH DƯỠNG & TẬP LUYỆN</h2>
+        <div id="pdf-export-container">
+            <h2 style="text-align:center; color: #065f46; margin-bottom: 5px;">BÁO CÁO DINH DƯỠNG CÁ NHÂN</h2>
+            <p style="text-align:center; font-size: 12px; color: #64748b; margin-bottom: 25px;">Ngày khởi tạo: <span id="currentDate"></span></p>
             
-            <div id="bmi-alarm"></div>
+            <div id="bmiStatus"></div>
 
-            <div style="margin: 20px 0; border-bottom: 2px solid var(--primary-green); padding-bottom: 10px;">
-                <p><b>Thành viên:</b> <span id="res-name" style="text-transform: uppercase;"></span></p>
-                <p><b>Mục tiêu calo hàng ngày:</b> <span id="res-cal" style="color:red; font-weight:bold;"></span> Calo</p>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                <p><b>Khách hàng:</b> <span id="outName"></span></p>
+                <p><b>Mục tiêu nạp:</b> <span id="outCal" style="color:var(--danger); font-weight:800;"></span> Kcal/ngày</p>
             </div>
 
-            <div class="macro-grid">
-                <div class="macro-item"><span class="macro-val" id="res-carb"></span><label>Carbs (Tinh bột)</label></div>
-                <div class="macro-item"><span class="macro-val" id="res-protein"></span><label>Protein (Đạm)</label></div>
-                <div class="macro-item"><span class="macro-val" id="res-fat"></span><label>Fats (Béo)</label></div>
+            <div class="macro-container">
+                <div class="macro-card"><span id="outCarb">0g</span><label>Carbs (Tinh bột)</label></div>
+                <div class="macro-card"><span id="outProt">0g</span><label>Protein (Đạm)</label></div>
+                <div class="macro-card"><span id="outFat">0g</span><label>Fats (Béo)</label></div>
             </div>
 
-            <h3>II. Định Lượng Thực Phẩm Chi Tiết</h3>
+            <h3 class="section-title" style="margin-top: 30px;">II. Thực Đơn Định Lượng Kỷ Luật (28 Ngày)</h3>
             <table>
                 <thead>
-                    <tr><th>Nhóm</th><th>Nguyên liệu khuyên dùng</th><th>Định lượng (Sống/Ngày)</th></tr>
+                    <tr>
+                        <th width="30%">Nhóm Thực Phẩm</th>
+                        <th width="40%">Gợi ý Nguyên Liệu</th>
+                        <th width="30%">Định lượng (Sống/Ngày)</th>
+                    </tr>
                 </thead>
-                <tbody id="portion-table"></tbody>
+                <tbody id="dietTable"></tbody>
             </table>
 
-            <h3>III. Lịch Ăn Kỷ Luật 28 Ngày</h3>
+            <h3 class="section-title" style="margin-top: 30px;">III. Lịch Trình Tập Luyện Quốc Tế</h3>
             <table>
                 <thead>
-                    <tr><th>Bữa Sáng (07:00)</th><th>Bữa Trưa (12:00)</th><th>Bữa Tối (18:30)</th></tr>
-                </thead>
-                <tbody>
-                    <tr><td>1 ly Sữa non + 100g Khoai lang</td><td>150g Ức gà/Cá + 1 bát cơm lứt + Rau luộc</td><td>100g Đạm nhẹ + Salad rau xanh</td></tr>
-                    <tr style="background:#f9f9f9;"><td>Trứng luộc + Bánh mì đen + Hoa quả</td><td>150g Bò nạc/Tôm + Bún lứt + Rau xào ít dầu</td><td>Súp gà rau củ + 1 hũ sữa không đường</td></tr>
-                </tbody>
-            </table>
-
-            <div style="page-break-before: always;"></div> <h3>IV. Lộ Trình Tập Luyện Chi Tiết (28 Ngày)</h3>
-            <table>
-                <thead>
-                    <tr><th>Giai đoạn</th><th>Thứ 2, 4, 6 (Đốt mỡ)</th><th>Thứ 3, 5, 7 (Kiến tạo cơ)</th><th>Chủ Nhật</th></tr>
+                    <tr>
+                        <th>Giai đoạn</th>
+                        <th>Thứ 2-4-6 (Cardio Đốt Mỡ)</th>
+                        <th>Thứ 3-5-7 (Kháng Lực - Tạo Khối)</th>
+                    </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td><b>Tuần 1-2:<br>THÍCH NGHI</b></td>
-                        <td>Đi bộ nhanh/Đạp xe: 30-40 phút.<br>Duy trì nhịp thở đều.</td>
-                        <td>- Squat: 3 hiệp x 15 cái<br>- Chống đẩy: 3 hiệp x 10 cái<br>- Plank: 30s x 3 hiệp</td>
-                        <td rowspan="2" style="text-align: center;">Nghỉ ngơi tích cực<br>(Yoga/Thiền)</td>
+                        <td><b>Tuần 1-2</b></td>
+                        <td>30p Đi bộ nhanh / Đạp xe</td>
+                        <td>Squat (3x15), Chống đẩy (3x10)</td>
                     </tr>
-                    <tr style="background:#f9f9f9;">
-                        <td><b>Tuần 3-4:<br>KỶ LUẬT</b></td>
-                        <td>Chạy bộ hoặc HIIT: 30 phút.<br>(1p nhanh - 2p chậm)</td>
-                        <td>- Lunges: 3 hiệp x 12 cái<br>- Tập bụng chuyên sâu<br>- Plank: 60s x 3 hiệp</td>
+                    <tr style="background: #f8fafc;">
+                        <td><b>Tuần 3-4</b></td>
+                        <td>40p Chạy bộ nhịp chậm (Zone 2)</td>
+                        <td>Lunges (3x12), Plank (60s x 3)</td>
                     </tr>
                 </tbody>
             </table>
-            <p style="font-size: 11px; font-style: italic; color: #555;">* Bản quyền thuộc về Hệ thống Dinh dưỡng Thịnh Vượng. Lưu ý: Uống tối thiểu 2.5L nước mỗi ngày.</p>
+            <p style="font-size: 11px; margin-top: 15px; color: #64748b; font-style: italic;">* Lưu ý: Ưu tiên sử dụng đạm sạch (Sữa non IgGold, Ức gà, Cá) và uống đủ 2-3L nước mỗi ngày.</p>
         </div>
 
-        <button class="btn-pdf" onclick="fastExportPDF()">⚡ TẢI PDF NGAY (FIXED)</button>
+        <button class="btn-pdf" onclick="exportPDF()">⚡ XUẤT FILE PDF CHO KHÁCH HÀNG</button>
     </div>
 </div>
 
 <script>
-    function processData() {
+    function calculatePlan() {
         const name = document.getElementById('custName').value || "QUÝ KHÁCH";
         const h = parseFloat(document.getElementById('height').value);
         const w = parseFloat(document.getElementById('weight').value);
@@ -216,75 +268,80 @@
         const act = parseFloat(document.getElementById('activity').value);
         const goal = parseFloat(document.getElementById('goal').value);
 
-        if(!h || !w || !age) { alert("Vui lòng điền đủ thông tin!"); return; }
+        if(!h || !w || !age) { alert("Vui lòng điền đủ thông số!"); return; }
 
+        // BMI
         const bmi = w / ((h/100)**2);
-        let alarm = "";
-        if (bmi >= 25) alarm = `<div class="alert-card status-danger">⚠️ BÁO ĐỘNG: BMI ${bmi.toFixed(1)} - THỪA CÂN/BÉO PHÌ</div>`;
-        else if (bmi < 18.5) alarm = `<div class="alert-card status-warning">⚠️ LƯU Ý: BMI ${bmi.toFixed(1)} - THIẾU CÂN</div>`;
-        else alarm = `<div class="alert-card status-success">✅ TUYỆT VỜI: BMI ${bmi.toFixed(1)} - CƠ THỂ CÂN ĐỐI</div>`;
+        let status = "";
+        if(bmi >= 25) status = `<div class="status-badge alert">⚠️ CẢNH BÁO: CHỈ SỐ BMI ${bmi.toFixed(1)} - THỪA CÂN</div>`;
+        else if(bmi < 18.5) status = `<div class="status-badge warn">⚠️ LƯU Ý: CHỈ SỐ BMI ${bmi.toFixed(1)} - THIẾU CÂN</div>`;
+        else status = `<div class="status-badge healthy">✅ TUYỆT VỜI: CHỈ SỐ BMI ${bmi.toFixed(1)} - CÂN ĐỐI</div>`;
         
-        document.getElementById('bmi-alarm').innerHTML = alarm;
+        document.getElementById('bmiStatus').innerHTML = status;
 
+        // Calo
         let bmr = (10 * w) + (6.25 * h) - (5 * age);
         bmr = (gender === 'male') ? bmr + 5 : bmr - 161;
         const target = (bmr * act) + goal;
 
+        // Macros
+        const c = (target * 0.45) / 4;
+        const p = (target * 0.30) / 4;
+        const f = (target * 0.25) / 9;
+
+        // Display
         document.getElementById('result-area').style.display = 'block';
-        document.getElementById('res-name').innerText = name;
-        document.getElementById('res-cal').innerText = Math.round(target);
-        document.getElementById('res-carb').innerText = Math.round((target * 0.4) / 4) + "g";
-        document.getElementById('res-protein').innerText = Math.round((target * 0.3) / 4) + "g";
-        document.getElementById('res-fat').innerText = Math.round((target * 0.3) / 9) + "g";
+        document.getElementById('outName').innerText = name.toUpperCase();
+        document.getElementById('outCal').innerText = Math.round(target);
+        document.getElementById('outCarb').innerText = Math.round(c) + "g";
+        document.getElementById('outProt').innerText = Math.round(p) + "g";
+        document.getElementById('outFat').innerText = Math.round(f) + "g";
+        document.getElementById('currentDate').innerText = new Date().toLocaleDateString('vi-VN');
 
-        const meat = Math.round(((target * 0.3) / 4) * 4.5);
-        const rice = Math.round(((target * 0.4) / 4) * 3.5);
-
-        document.getElementById('portion-table').innerHTML = `
-            <tr><td><b>Chất Đạm</b></td><td>Thịt bò, Ức gà, Cá, Trứng</td><td>~${meat}g/ngày</td></tr>
-            <tr><td><b>Tinh Bột</b></td><td>Cơm lứt, Khoai lang, Yến mạch</td><td>~${rice}g/ngày</td></tr>
-            <tr><td><b>Chất Xơ</b></td><td>Rau xanh đa dạng</td><td>Không giới hạn (>400g)</td></tr>
+        // Định lượng thực phẩm
+        const proteinSource = Math.round(p * 4.5); // Ước tính thịt sống
+        const carbSource = Math.round(c * 3.5);    // Ước tính cơm/khoai
+        
+        document.getElementById('dietTable').innerHTML = `
+            <tr><td><b>Đạm Sạch</b></td><td>Ức gà, Cá, IgGold, Trứng</td><td>${proteinSource}g - ${proteinSource+50}g</td></tr>
+            <tr><td><b>Tinh Bột Tốt</b></td><td>Khoai lang, Gạo lứt, Yến mạch</td><td>${carbSource}g - ${carbSource+30}g</td></tr>
+            <tr><td><b>Chất Xơ</b></td><td>Rau xanh, Súp lơ, Xà lách</td><td>Tối thiểu 500g</td></tr>
         `;
 
         window.scrollTo({ top: document.getElementById('result-area').offsetTop - 20, behavior: 'smooth' });
     }
 
-    async function fastExportPDF() {
+    async function exportPDF() {
         const btn = document.querySelector('.btn-pdf');
-        btn.innerText = "ĐANG XỬ LÝ... VUI LÒNG ĐỢI";
-        btn.disabled = true;
+        btn.innerText = "ĐANG TẠO FILE... VUI LÒNG ĐỢI";
+        
+        // Đưa màn hình về đầu vùng cần in
+        window.scrollTo(0,0);
 
-        // BƯỚC 1: Đưa màn hình về đầu trang để tránh lỗi capture hụt
-        window.scrollTo(0, 0);
+        const element = document.getElementById('pdf-export-container');
+        const fileName = `Plan-Health-${document.getElementById('custName').value || 'Customer'}.pdf`;
 
-        // BƯỚC 2: Đợi một chút để trình duyệt render lại nội dung
-        await new Promise(resolve => setTimeout(resolve, 500));
-
-        const element = document.getElementById('printable-content');
-        const name = document.getElementById('custName').value || "KhachHang";
-
+        // Cấu hình fix lỗi trắng trang
         const opt = {
-            margin: [0.4, 0.4],
-            filename: `Plan-28Days-${name}.pdf`,
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { 
+            margin:       [0.5, 0.5],
+            filename:     fileName,
+            image:        { type: 'jpeg', quality: 1 },
+            html2canvas:  { 
                 scale: 2, 
                 useCORS: true, 
-                logging: false,
-                scrollY: 0, // Quan trọng: Reset scroll khi chụp
-                windowWidth: 850 // Ép chiều rộng khung chụp
+                letterRendering: true,
+                scrollY: 0 
             },
-            jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+            jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' },
+            pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
         };
 
         try {
             await html2pdf().set(opt).from(element).save();
-        } catch (e) {
-            console.error(e);
-            alert("Có lỗi khi xuất file. Hãy thử lại.");
+        } catch (error) {
+            alert("Lỗi xuất PDF. Hãy thử dùng trình duyệt Chrome.");
         } finally {
-            btn.innerText = "⚡ TẢI PDF NGAY (FIXED)";
-            btn.disabled = false;
+            btn.innerText = "⚡ XUẤT FILE PDF CHO KHÁCH HÀNG";
         }
     }
 </script>
