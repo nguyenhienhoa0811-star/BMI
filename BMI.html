@@ -3,11 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hệ Thống Quản Lý Dinh Dưỡng & Kế Hoạch 28 Ngày</title>
+    <title>Hệ Thống Quản Lý Dinh Dưỡng - Fix PDF</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         :root {
             --primary-color: #0056b3;
             --secondary-color: #28a745;
+            --pdf-color: #dc3545;
             --bg-color: #f4f7f6;
             --box-bg: #ffffff;
             --text-color: #333;
@@ -32,23 +34,15 @@
             text-align: center;
             color: var(--primary-color);
             text-transform: uppercase;
-        }
-        .section-title {
-            border-bottom: 2px solid var(--primary-color);
-            padding-bottom: 10px;
-            margin-top: 30px;
-            text-align: left;
+            margin-top: 20px;
         }
         .form-group {
             margin-bottom: 15px;
             display: flex;
             flex-direction: column;
         }
-        label {
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        input, select, textarea {
+        label { font-weight: bold; margin-bottom: 5px; }
+        input, select {
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
@@ -71,58 +65,40 @@
             font-weight: bold;
             cursor: pointer;
             margin-top: 20px;
-            transition: background 0.3s;
         }
-        button:hover {
-            background-color: #004494;
-        }
+        .btn-pdf { background-color: var(--pdf-color); margin-top: 15px; }
+        
+        /* Vùng kết quả */
         #result {
             margin-top: 30px;
-            padding: 25px;
-            background: #e9f5ff;
-            border-left: 5px solid var(--primary-color);
-            border-radius: 5px;
-            display: none;
+            display: none; /* Chỉ hiện sau khi bấm tính toán */
         }
-        .highlight {
-            font-weight: bold;
-            color: #d9534f;
+
+        /* Định dạng riêng cho nội dung PDF để đảm bảo hiển thị chữ */
+        #pdf-content {
+            padding: 20px;
+            background: #ffffff;
+            color: #000000; /* Ép màu chữ đen để PDF rõ nét */
         }
+
         .macro-box {
-            background: #fff;
-            padding: 15px;
+            background: #f8f9fa;
+            padding: 10px;
             margin-top: 10px;
-            border-radius: 5px;
             border: 1px solid #ddd;
+            border-radius: 5px;
         }
-        /* Table Style cho 28 ngày */
-        .plan-container {
-            margin-top: 30px;
-            overflow-x: auto;
-        }
+
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 10px;
-            background: white;
+            margin-top: 15px;
         }
-        table, th, td {
-            border: 1px solid #ddd;
-        }
-        th, td {
-            padding: 12px;
-            text-align: left;
-            font-size: 14px;
-        }
-        th {
-            background-color: var(--primary-color);
-            color: white;
-        }
-        .week-header {
-            background-color: #f1f1f1;
-            font-weight: bold;
-            text-align: center;
-        }
+        table, th, td { border: 1px solid #333; }
+        th, td { padding: 10px; text-align: left; font-size: 13px; }
+        th { background-color: #eeeeee; color: #000; }
+        .week-header { background-color: #f9f9f9; font-weight: bold; text-align: center; }
+
         .customer-info-box {
             background: #f9f9f9;
             padding: 20px;
@@ -149,65 +125,63 @@
                 <input type="text" id="custPhone" placeholder="090x...">
             </div>
             <div class="form-group">
-                <label>Ghi chú mục tiêu (Ví dụ: Giảm mỡ bụng, tăng cơ tay):</label>
-                <input type="text" id="custNote" placeholder="Mục tiêu cá nhân...">
+                <label>Ghi chú mục tiêu:</label>
+                <input type="text" id="custNote" placeholder="Ví dụ: Giảm 5kg mỡ...">
             </div>
         </div>
     </div>
 
-    <h3 style="text-align: left;">II. Thông Số Đầu Vào</h3>
+    <h3 style="text-align: left;">II. Thông Số Cơ Thể</h3>
     <div class="grid-2">
         <div class="form-group">
-            <label for="gender">Giới tính:</label>
+            <label>Giới tính:</label>
             <select id="gender">
                 <option value="male">Nam</option>
                 <option value="female">Nữ</option>
             </select>
         </div>
         <div class="form-group">
-            <label for="age">Tuổi:</label>
-            <input type="number" id="age" value="42" min="1">
+            <label>Tuổi:</label>
+            <input type="number" id="age" value="42">
         </div>
         <div class="form-group">
-            <label for="weight">Cân nặng hiện tại (kg):</label>
-            <input type="number" id="weight" value="80" step="0.1" min="1">
+            <label>Cân nặng (kg):</label>
+            <input type="number" id="weight" value="80">
         </div>
         <div class="form-group">
-            <label for="height">Chiều cao (cm):</label>
-            <input type="number" id="height" value="165" step="0.1" min="1">
+            <label>Chiều cao (cm):</label>
+            <input type="number" id="height" value="165">
         </div>
     </div>
 
     <div class="form-group">
-        <label for="activity">Mức độ vận động:</label>
+        <label>Mức độ vận động:</label>
         <select id="activity">
-            <option value="1.2">Ít vận động (Làm việc văn phòng)</option>
-            <option value="1.375">Vận động nhẹ (Thể dục 1-3 ngày/tuần)</option>
-            <option value="1.55">Vận động vừa (Thể dục 3-5 ngày/tuần)</option>
-            <option value="1.725">Vận động nhiều (Thể dục 6-7 ngày/tuần)</option>
+            <option value="1.2">Ít vận động</option>
+            <option value="1.375">Vận động nhẹ</option>
+            <option value="1.55" selected>Vận động vừa</option>
+            <option value="1.725">Vận động nhiều</option>
         </select>
     </div>
 
     <div class="form-group">
-        <label for="goal">Mục tiêu chiến lược:</label>
+        <label>Mục tiêu:</label>
         <select id="goal">
-            <option value="-500">Giảm mỡ nhanh (Kỷ luật cao)</option>
-            <option value="0">Duy trì vóc dáng (Cân bằng)</option>
-            <option value="500">Tăng cơ - Tăng cân (Phát triển)</option>
+            <option value="-500">Giảm mỡ nhanh</option>
+            <option value="0">Duy trì vóc dáng</option>
+            <option value="500">Tăng cơ - Tăng cân</option>
         </select>
     </div>
 
     <button onclick="calculateMetrics()">XUẤT KẾ HOẠCH DINH DƯỠNG</button>
 
     <div id="result">
-        <h2 id="display-name">Báo Cáo Của Bạn</h2>
-        <div id="bmi-result"></div>
-        <div id="calorie-result"></div>
-        <div id="macro-result"></div>
+        <div id="pdf-content">
+            <h2 id="display-name" style="border-bottom: 2px solid #0056b3; padding-bottom: 10px;">BÁO CÁO DINH DƯỠNG CÁ NHÂN</h2>
+            <div id="info-display"></div>
+            <div id="metrics-display"></div>
 
-        <div class="plan-container">
-            <h3 class="section-title">III. Kế Hoạch 28 Ngày Kỷ Luật</h3>
-            <p><i>*Lưu ý: Thực đơn xoay vòng theo tuần để tạo thói quen. Tỷ lệ thức ăn dựa trên số Gam đã tính ở trên.</i></p>
+            <h3>III. Thực Đơn 28 Ngày Kỷ Luật</h3>
             <table>
                 <thead>
                     <tr>
@@ -215,112 +189,109 @@
                         <th>Bữa Sáng</th>
                         <th>Bữa Trưa</th>
                         <th>Bữa Tối</th>
-                        <th>Vận động</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr class="week-header"><td colspan="5">TUẦN 1 & 2: THÍCH NGHI & LÀM SẠCH</td></tr>
+                    <tr class="week-header"><td colspan="4">TUẦN 1 & 2: THÍCH NGHI & LÀM SẠCH</td></tr>
+                    <tr><td>Thứ 2, 4, 6</td><td>Sữa non + Khoai lang</td><td>Ức gà + Cơm lứt</td><td>Salad cá hồi</td></tr>
+                    <tr><td>Thứ 3, 5, 7</td><td>Yến mạch + Hạt</td><td>Thịt bò + Bún lứt</td><td>Cá hấp + Rau</td></tr>
+                    <tr class="week-header"><td colspan="4">TUẦN 3 & 4: TĂNG TỐC & KỶ LUẬT</td></tr>
+                    <tr><td>Thứ 2, 4, 6</td><td>Trứng + Bánh mì đen</td><td>Tôm ram + Cơm lứt</td><td>Thịt nạc luộc</td></tr>
+                    <tr><td>Thứ 3, 5, 7</td><td>Sinh tố bơ yến mạch</td><td>Cá thu + Cơm lứt</td><td>Súp gà ngô non</td></tr>
+                </tbody>
+            </table>
+
+            <h3>IV. Khuyến Nghị Tập Luyện</h3>
+            <table>
+                <thead>
                     <tr>
-                        <td>Thứ 2, 4, 6</td>
-                        <td>Sữa non bổ sung + Khoai lang</td>
-                        <td>Ức gà áp chảo + Cơm lứt + Rau xanh</td>
-                        <td>Salad cá hồi/trứng + Trái cây ít đường</td>
-                        <td>Đi bộ 30p</td>
+                        <th>Tuần</th>
+                        <th>Thứ 2, 4, 6 (Sức bền)</th>
+                        <th>Thứ 3, 5, 7 (Sức mạnh)</th>
                     </tr>
-                    <tr>
-                        <td>Thứ 3, 5, 7</td>
-                        <td>Yến mạch sữa tươi + Hạt hạnh nhân</td>
-                        <td>Thịt bò tái lăn + Bún lứt + Bông cải xanh</td>
-                        <td>Cá hấp + Rau củ luộc</td>
-                        <td>Cardio nhẹ</td>
-                    </tr>
-                    <tr class="week-header"><td colspan="5">TUẦN 3 & 4: TĂNG TỐC & KỶ LUẬT</td></tr>
-                    <tr>
-                        <td>Thứ 2, 4, 6</td>
-                        <td>Trứng luộc + Bánh mì đen + Sữa non</td>
-                        <td>Tôm ram mặn + Cơm lứt + Canh rau</td>
-                        <td>Thịt lợn nạc luộc + Nhiều rau xanh</td>
-                        <td>Chạy bộ/Gym</td>
-                    </tr>
-                    <tr>
-                        <td>Thứ 3, 5, 7</td>
-                        <td>Sinh tố bơ yến mạch + Protein</td>
-                        <td>Cá thu kho + Cơm lứt + Su su luộc</td>
-                        <td>Súp ức gà ngô non</td>
-                        <td>HIIT/Vận động mạnh</td>
-                    </tr>
-                    <tr>
-                        <td>Chủ Nhật</td>
-                        <td colspan="4" style="text-align: center; font-weight: bold; color: var(--secondary-color);">
-                            NGÀY "RELOAD": Ăn thoải mái hơn một chút (Cheat meal nhẹ) - Nghỉ ngơi hoàn toàn.
-                        </td>
-                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td><b>1-2</b></td><td>Đi bộ nhanh 30-45p</td><td>Squat, hít đất (3 hiệp)</td></tr>
+                    <tr><td><b>3-4</b></td><td>Chạy bộ hoặc HIIT 30p</td><td>Tập tạ/Gym mục tiêu</td></tr>
                 </tbody>
             </table>
         </div>
+
+        <button class="btn-pdf" onclick="exportToPDF()">TẢI FILE PDF CHÍNH THỨC</button>
     </div>
 </div>
 
 <script>
     function calculateMetrics() {
-        // Lấy thông tin khách hàng
-        const name = document.getElementById('custName').value || "Khách hàng";
-        const phone = document.getElementById('custPhone').value;
+        const name = document.getElementById('custName').value || "KHÁCH HÀNG";
+        const phone = document.getElementById('custPhone').value || "N/A";
+        const note = document.getElementById('custNote').value || "N/A";
         
-        // Lấy dữ liệu tính toán
         const gender = document.getElementById('gender').value;
         const age = parseFloat(document.getElementById('age').value);
         const weight = parseFloat(document.getElementById('weight').value);
         const height = parseFloat(document.getElementById('height').value);
-        const activityMultiplier = parseFloat(document.getElementById('activity').value);
-        const goalCalorie = parseFloat(document.getElementById('goal').value);
+        const activity = parseFloat(document.getElementById('activity').value);
+        const goal = parseFloat(document.getElementById('goal').value);
 
         if (!age || !weight || !height) {
-            alert("Vui lòng điền đầy đủ chiều cao, cân nặng, độ tuổi!");
-            return;
+            alert("Vui lòng điền đủ thông tin!"); return;
         }
 
-        const heightM = height / 100;
-        const bmi = weight / (heightM * heightM);
-        let bmiStatus = bmi >= 25 ? "Thừa cân" : (bmi >= 18.5 ? "Bình thường" : "Thiếu cân");
+        const bmi = weight / ((height/100)**2);
+        const bmr = (gender === 'male') ? (10*weight + 6.25*height - 5*age + 5) : (10*weight + 6.25*height - 5*age - 161);
+        const tdee = bmr * activity;
+        const target = tdee + goal;
 
-        let bmr = (gender === 'male') 
-            ? (10 * weight) + (6.25 * height) - (5 * age) + 5
-            : (10 * weight) + (6.25 * height) - (5 * age) - 161;
+        const carbs = (target * 0.4) / 4;
+        const protein = (target * 0.3) / 4;
+        const fat = (target * 0.3) / 9;
 
-        const tdee = bmr * activityMultiplier;
-        const targetCalories = tdee + goalCalorie;
-
-        // Macros 40-30-30
-        const carbsG = (targetCalories * 0.4) / 4;
-        const proteinG = (targetCalories * 0.3) / 4;
-        const fatG = (targetCalories * 0.3) / 9;
-
-        // Hiển thị
+        // Hiển thị kết quả
         document.getElementById('result').style.display = 'block';
-        document.getElementById('display-name').innerText = "KẾ HOẠCH CHO: " + name.toUpperCase() + (phone ? " - " + phone : "");
+        document.getElementById('display-name').innerText = "KẾ HOẠCH CHO: " + name.toUpperCase();
         
-        document.getElementById('bmi-result').innerHTML = `
-            <p><b>Chỉ số BMI:</b> ${bmi.toFixed(2)} (${bmiStatus})</p>
+        document.getElementById('info-display').innerHTML = `
+            <p><b>Khách hàng:</b> ${name} | <b>SĐT:</b> ${phone}</p>
+            <p><b>Mục tiêu:</b> ${note}</p>
         `;
 
-        document.getElementById('calorie-result').innerHTML = `
-            <p><b>Năng lượng tiêu chuẩn (TDEE):</b> ${Math.round(tdee)} calo/ngày</p>
-            <p><b>Mục tiêu nạp mỗi ngày:</b> <span class="highlight">${Math.round(targetCalories)} calo</span></p>
-        `;
-
-        document.getElementById('macro-result').innerHTML = `
-            <h3>Định Lượng Thực Phẩm Mỗi Ngày:</h3>
+        document.getElementById('metrics-display').innerHTML = `
+            <p><b>BMI:</b> ${bmi.toFixed(2)} | <b>Mục tiêu nạp:</b> ${Math.round(target)} calo/ngày</p>
             <div class="grid-2">
-                <div class="macro-box">🍚 <b>Tinh bột:</b> ${Math.round(carbsG)}g</div>
-                <div class="macro-box">🍗 <b>Chất đạm:</b> ${Math.round(proteinG)}g</div>
-                <div class="macro-box">🥑 <b>Chất béo:</b> ${Math.round(fatG)}g</div>
+                <div class="macro-box">🍚 <b>Tinh bột:</b> ${Math.round(carbs)}g</div>
+                <div class="macro-box">🍗 <b>Đạm:</b> ${Math.round(protein)}g</div>
+                <div class="macro-box">🥑 <b>Chất béo:</b> ${Math.round(fat)}g</div>
             </div>
-            <p style="text-align:center; font-size: 13px; margin-top:10px;"><i>(Số gam trên là trọng lượng khô/sống của thực phẩm)</i></p>
         `;
         
-        // Cuộn xuống kết quả
-        document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
+        window.scrollTo({ top: document.getElementById('result').offsetTop, behavior: 'smooth' });
+    }
+
+    async function exportToPDF() {
+        const element = document.getElementById('pdf-content');
+        const name = document.getElementById('custName').value || "Khach-Hang";
+        
+        // Cấu hình tối ưu để tránh mất chữ
+        const opt = {
+            margin:       [0.5, 0.5],
+            filename:     `KeHoach-28Ngay-${name}.pdf`,
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { 
+                scale: 2, 
+                useCORS: true, 
+                letterRendering: true,
+                logging: false
+            },
+            jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+        };
+
+        try {
+            await html2pdf().set(opt).from(element).save();
+        } catch (error) {
+            console.error("Lỗi xuất PDF:", error);
+            alert("Có lỗi khi tạo PDF. Hãy thử lại!");
+        }
     }
 </script>
 
