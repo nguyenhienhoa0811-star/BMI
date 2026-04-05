@@ -147,7 +147,7 @@
 
 <div class="container">
     <div class="header">
-        <h1>KHUYẾN NGHỊ TỪ HỆ THỐNG THỨC CỦA BẠN</h1>
+        <h1>KHUYẾN NGHỊ CHỦ ĐỘNG CHĂM SÓC SỨC KHOẺ</h1>
         <p>Hệ thống Thiết kế Vóc dáng & Dinh dưỡng Chuyên sâu</p>
     </div>
 
@@ -231,9 +231,9 @@
                 <tbody id="sampleWeekTable">
                     <tr>
                         <td><b>Thứ 2/4/6</b></td>
-                        <td>Sữa non COLOS IgGOLD™ + 1 củ khoai lang nhỏ, GreenBoost™.</td>
-                        <td>Cơm gạo lứt + Ức gà áp chảo + Bông cải xanh luộc, .</td>
-                        <td>Salad tôm + Dầu olive + 1 quả trứng luộc (Ít tinh bột).</td>
+                        <td>Sữa non COLOS IgGOLD™ + 1 củ khoai lang nhỏ, Trà Diệp lục thảo mộc GreenBoost™.</td>
+                        <td>Cơm gạo lứt + Ức gà áp chảo + Bông cải xanh luộc, TPBS Protein FITBoost™ .</td>
+                        <td>Salad tôm + Dầu olive + 1 quả trứng luộc, TPBS CardioBoost™ (Ít tinh bột).</td>
                     </tr>
                     <tr style="background: #f8fafc;">
                         <td><b>Thứ 3/5/7</b></td>
@@ -245,7 +245,7 @@
                         <td><b>Chủ Nhật</b></td>
                         <td>Bún gạo lứt nấu mọc nạc + Nhiều rau dọc mùng.</td>
                         <td>Bữa ăn thoải mái (Cheat Meal) - Kiểm soát 80%.</td>
-                        <td>COLOS IgGOLD™ + Trái cây ít ngọt (Thanh long/Ổi).</td>
+                        <td>Sữa non COLOS IgGOLD™+ Trái cây ít ngọt (Thanh long/Ổi).</td>
                     </tr>
                 </tbody>
             </table>
@@ -318,10 +318,10 @@
         const carbSource = Math.round(c * 3.2);    
         
         document.getElementById('dietTable').innerHTML = `
-            <tr><td><b>Đạm (Protein)</b></td><td>Ức gà, Cá hồi/thu, Trứng, Thịt bò nạc, Tôm, Sữa IgGold.</td><td><b>${proteinSource}g</b> (Chia 3 bữa)</td></tr>
-            <tr><td><b>Tinh Bột</b></td><td>Khoai lang, Gạo lứt, Yến mạch, Bún gạo lứt.</td><td><b>${carbSource}g</b> (Tập trung sáng/trưa)</td></tr>
-            <tr><td><b>Chất Béo</b></td><td>Dầu Olive, Hạt hạnh nhân/walnut, Quả bơ.</td><td><b>~${Math.round(f)}g</b></td></tr>
-            <tr><td><b>Chất Xơ</b></td><td>Súp lơ, Rau cải, Xà lách, Dưa chuột.</td><td><b>>500g</b> (Ăn thoải mái)</td></tr>
+            <tr><td><b>Đạm (Protein)</b></td><td>Ức gà, Cá hồi/thu, Trứng, Thịt bò nạc, Tôm, TPBS Protein FITBoost™.</td><td><b>${proteinSource}g</b> (Chia 3 bữa)</td></tr>
+            <tr><td><b>Tinh Bột</b></td><td>Khoai lang, Gạo lứt, Yến mạch, Bún gạo lứt, Sữa non COLOS IgGOLD™.</td><td><b>${carbSource}g</b> (Tập trung sáng/trưa)</td></tr>
+            <tr><td><b>Chất Béo</b></td><td>Dầu Olive,TPBS CardioBoost™, Hạt hạnh nhân/walnut, Quả bơ.</td><td><b>~${Math.round(f)}g</b></td></tr>
+            <tr><td><b>Chất Xơ</b></td><td>Súp lơ, Rau cải, Xà lách, Dưa chuột, Trà thảo mộc GreenBoost™.</td><td><b>>500g</b> (Ăn thoải mái)</td></tr>
         `;
 
         window.scrollTo({ top: document.getElementById('result-area').offsetTop - 20, behavior: 'smooth' });
