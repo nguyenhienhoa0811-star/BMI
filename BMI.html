@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tính Toán Chỉ Số Cơ Thể & Thực Đơn</title>
+    <title>Hệ Thống Quản Lý Dinh Dưỡng & Kế Hoạch 28 Ngày</title>
     <style>
         :root {
             --primary-color: #0056b3;
+            --secondary-color: #28a745;
             --bg-color: #f4f7f6;
             --box-bg: #ffffff;
             --text-color: #333;
@@ -20,16 +21,23 @@
             margin: 0;
         }
         .container {
-            max-width: 800px;
+            max-width: 900px;
             margin: auto;
             background: var(--box-bg);
             padding: 30px;
             border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
-        h1, h2 {
+        h1, h2, h3 {
             text-align: center;
             color: var(--primary-color);
+            text-transform: uppercase;
+        }
+        .section-title {
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+            margin-top: 30px;
+            text-align: left;
         }
         .form-group {
             margin-bottom: 15px;
@@ -40,7 +48,7 @@
             font-weight: bold;
             margin-bottom: 5px;
         }
-        input, select {
+        input, select, textarea {
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
@@ -70,7 +78,7 @@
         }
         #result {
             margin-top: 30px;
-            padding: 20px;
+            padding: 25px;
             background: #e9f5ff;
             border-left: 5px solid var(--primary-color);
             border-radius: 5px;
@@ -87,13 +95,67 @@
             border-radius: 5px;
             border: 1px solid #ddd;
         }
+        /* Table Style cho 28 ngày */
+        .plan-container {
+            margin-top: 30px;
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            background: white;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            font-size: 14px;
+        }
+        th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        .week-header {
+            background-color: #f1f1f1;
+            font-weight: bold;
+            text-align: center;
+        }
+        .customer-info-box {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px dashed #bbb;
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Hệ Thống Tính Toán Dinh Dưỡng</h1>
-    
+    <h1>Hệ Thống Thiết Kế Vóc Dáng Thịnh Vượng</h1>
+
+    <div class="customer-info-box">
+        <h3 style="margin-top:0; text-align: left;">I. Thông Tin Khách Hàng</h3>
+        <div class="form-group">
+            <label>Họ và Tên:</label>
+            <input type="text" id="custName" placeholder="Nhập tên khách hàng...">
+        </div>
+        <div class="grid-2">
+            <div class="form-group">
+                <label>Số điện thoại:</label>
+                <input type="text" id="custPhone" placeholder="090x...">
+            </div>
+            <div class="form-group">
+                <label>Ghi chú mục tiêu (Ví dụ: Giảm mỡ bụng, tăng cơ tay):</label>
+                <input type="text" id="custNote" placeholder="Mục tiêu cá nhân...">
+            </div>
+        </div>
+    </div>
+
+    <h3 style="text-align: left;">II. Thông Số Đầu Vào</h3>
     <div class="grid-2">
         <div class="form-group">
             <label for="gender">Giới tính:</label>
@@ -107,7 +169,7 @@
             <input type="number" id="age" value="42" min="1">
         </div>
         <div class="form-group">
-            <label for="weight">Cân nặng (kg):</label>
+            <label for="weight">Cân nặng hiện tại (kg):</label>
             <input type="number" id="weight" value="80" step="0.1" min="1">
         </div>
         <div class="form-group">
@@ -127,27 +189,85 @@
     </div>
 
     <div class="form-group">
-        <label for="goal">Mục tiêu:</label>
+        <label for="goal">Mục tiêu chiến lược:</label>
         <select id="goal">
-            <option value="-500">Giảm mỡ (-500 calo)</option>
-            <option value="0">Giữ dáng (Giữ nguyên calo)</option>
-            <option value="500">Tăng cơ/Tăng cân (+500 calo)</option>
+            <option value="-500">Giảm mỡ nhanh (Kỷ luật cao)</option>
+            <option value="0">Duy trì vóc dáng (Cân bằng)</option>
+            <option value="500">Tăng cơ - Tăng cân (Phát triển)</option>
         </select>
     </div>
 
-    <button onclick="calculateMetrics()">TÍNH TOÁN NGAY</button>
+    <button onclick="calculateMetrics()">XUẤT KẾ HOẠCH DINH DƯỠNG</button>
 
     <div id="result">
-        <h2>Báo Cáo Chi Tiết</h2>
+        <h2 id="display-name">Báo Cáo Của Bạn</h2>
         <div id="bmi-result"></div>
         <div id="calorie-result"></div>
         <div id="macro-result"></div>
+
+        <div class="plan-container">
+            <h3 class="section-title">III. Kế Hoạch 28 Ngày Kỷ Luật</h3>
+            <p><i>*Lưu ý: Thực đơn xoay vòng theo tuần để tạo thói quen. Tỷ lệ thức ăn dựa trên số Gam đã tính ở trên.</i></p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Giai đoạn</th>
+                        <th>Bữa Sáng</th>
+                        <th>Bữa Trưa</th>
+                        <th>Bữa Tối</th>
+                        <th>Vận động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="week-header"><td colspan="5">TUẦN 1 & 2: THÍCH NGHI & LÀM SẠCH</td></tr>
+                    <tr>
+                        <td>Thứ 2, 4, 6</td>
+                        <td>Sữa non bổ sung + Khoai lang</td>
+                        <td>Ức gà áp chảo + Cơm lứt + Rau xanh</td>
+                        <td>Salad cá hồi/trứng + Trái cây ít đường</td>
+                        <td>Đi bộ 30p</td>
+                    </tr>
+                    <tr>
+                        <td>Thứ 3, 5, 7</td>
+                        <td>Yến mạch sữa tươi + Hạt hạnh nhân</td>
+                        <td>Thịt bò tái lăn + Bún lứt + Bông cải xanh</td>
+                        <td>Cá hấp + Rau củ luộc</td>
+                        <td>Cardio nhẹ</td>
+                    </tr>
+                    <tr class="week-header"><td colspan="5">TUẦN 3 & 4: TĂNG TỐC & KỶ LUẬT</td></tr>
+                    <tr>
+                        <td>Thứ 2, 4, 6</td>
+                        <td>Trứng luộc + Bánh mì đen + Sữa non</td>
+                        <td>Tôm ram mặn + Cơm lứt + Canh rau</td>
+                        <td>Thịt lợn nạc luộc + Nhiều rau xanh</td>
+                        <td>Chạy bộ/Gym</td>
+                    </tr>
+                    <tr>
+                        <td>Thứ 3, 5, 7</td>
+                        <td>Sinh tố bơ yến mạch + Protein</td>
+                        <td>Cá thu kho + Cơm lứt + Su su luộc</td>
+                        <td>Súp ức gà ngô non</td>
+                        <td>HIIT/Vận động mạnh</td>
+                    </tr>
+                    <tr>
+                        <td>Chủ Nhật</td>
+                        <td colspan="4" style="text-align: center; font-weight: bold; color: var(--secondary-color);">
+                            NGÀY "RELOAD": Ăn thoải mái hơn một chút (Cheat meal nhẹ) - Nghỉ ngơi hoàn toàn.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
 <script>
     function calculateMetrics() {
-        // Lấy dữ liệu từ form
+        // Lấy thông tin khách hàng
+        const name = document.getElementById('custName').value || "Khách hàng";
+        const phone = document.getElementById('custPhone').value;
+        
+        // Lấy dữ liệu tính toán
         const gender = document.getElementById('gender').value;
         const age = parseFloat(document.getElementById('age').value);
         const weight = parseFloat(document.getElementById('weight').value);
@@ -156,76 +276,51 @@
         const goalCalorie = parseFloat(document.getElementById('goal').value);
 
         if (!age || !weight || !height) {
-            alert("Vui lòng điền đầy đủ thông tin!");
+            alert("Vui lòng điền đầy đủ chiều cao, cân nặng, độ tuổi!");
             return;
         }
 
-        // 1. Tính BMI
         const heightM = height / 100;
         const bmi = weight / (heightM * heightM);
-        let bmiStatus = "";
-        if (bmi >= 25) {
-            bmiStatus = "Thừa cân (Nên ưu tiên mục tiêu giảm mỡ)";
-        } else if (bmi >= 18.5) {
-            bmiStatus = "Cân nặng bình thường (Duy trì nề nếp hiện tại)";
-        } else {
-            bmiStatus = "Thiếu cân (Nên ưu tiên mục tiêu tăng cân)";
-        }
+        let bmiStatus = bmi >= 25 ? "Thừa cân" : (bmi >= 18.5 ? "Bình thường" : "Thiếu cân");
 
-        // 2. Tính BMR (Mifflin-St Jeor)
-        let bmr = 0;
-        if (gender === 'male') {
-            bmr = (10 * weight) + (6.25 * height) - (5 * age) + 5;
-        } else {
-            bmr = (10 * weight) + (6.25 * height) - (5 * age) - 161;
-        }
+        let bmr = (gender === 'male') 
+            ? (10 * weight) + (6.25 * height) - (5 * age) + 5
+            : (10 * weight) + (6.25 * height) - (5 * age) - 161;
 
-        // 3. Tính TDEE và Calo mục tiêu
         const tdee = bmr * activityMultiplier;
         const targetCalories = tdee + goalCalorie;
 
-        // 4. Tính Macros (40% Carb, 30% Protein, 30% Fat)
-        const carbCals = targetCalories * 0.40;
-        const proteinCals = targetCalories * 0.30;
-        const fatCals = targetCalories * 0.30;
+        // Macros 40-30-30
+        const carbsG = (targetCalories * 0.4) / 4;
+        const proteinG = (targetCalories * 0.3) / 4;
+        const fatG = (targetCalories * 0.3) / 9;
 
-        const carbsG = carbCals / 4;
-        const proteinG = proteinCals / 4;
-        const fatG = fatCals / 9;
-
-        // 5. Hiển thị kết quả
+        // Hiển thị
         document.getElementById('result').style.display = 'block';
+        document.getElementById('display-name').innerText = "KẾ HOẠCH CHO: " + name.toUpperCase() + (phone ? " - " + phone : "");
         
         document.getElementById('bmi-result').innerHTML = `
-            <h3>1. Chỉ Số Khối Cơ Thể (BMI)</h3>
-            <p>BMI của bạn: <span class="highlight">${bmi.toFixed(2)}</span></p>
-            <p>Đánh giá: <strong>${bmiStatus}</strong></p>
+            <p><b>Chỉ số BMI:</b> ${bmi.toFixed(2)} (${bmiStatus})</p>
         `;
 
         document.getElementById('calorie-result').innerHTML = `
-            <h3>2. Năng Lượng Tiêu Hao & Mục Tiêu</h3>
-            <ul>
-                <li>Trao đổi chất cơ bản (BMR): <strong>${Math.round(bmr)} calo/ngày</strong></li>
-                <li>Tổng tiêu hao (TDEE): <strong>${Math.round(tdee)} calo/ngày</strong></li>
-                <li>Mức calo cần nạp mỗi ngày để đạt mục tiêu: <span class="highlight">${Math.round(targetCalories)} calo</span></li>
-            </ul>
+            <p><b>Năng lượng tiêu chuẩn (TDEE):</b> ${Math.round(tdee)} calo/ngày</p>
+            <p><b>Mục tiêu nạp mỗi ngày:</b> <span class="highlight">${Math.round(targetCalories)} calo</span></p>
         `;
 
         document.getElementById('macro-result').innerHTML = `
-            <h3>3. Tỷ Lệ Thực Đơn Chuẩn (40% Tinh bột - 30% Đạm - 30% Béo)</h3>
-            <div class="macro-box">
-                <p>🍚 <strong>Tinh bột (Carb): ${Math.round(carbsG)}g</strong> (${Math.round(carbCals)} calo)</p>
-                <p><em>Gợi ý: Gạo lứt, yến mạch, khoai lang, bánh mì nguyên cám.</em></p>
+            <h3>Định Lượng Thực Phẩm Mỗi Ngày:</h3>
+            <div class="grid-2">
+                <div class="macro-box">🍚 <b>Tinh bột:</b> ${Math.round(carbsG)}g</div>
+                <div class="macro-box">🍗 <b>Chất đạm:</b> ${Math.round(proteinG)}g</div>
+                <div class="macro-box">🥑 <b>Chất béo:</b> ${Math.round(fatG)}g</div>
             </div>
-            <div class="macro-box">
-                <p>🍗 <strong>Đạm (Protein): ${Math.round(proteinG)}g</strong> (${Math.round(proteinCals)} calo)</p>
-                <p><em>Gợi ý: Ức gà, cá biển, thịt nạc, trứng, các loại đậu, hoặc kết hợp các sản phẩm sữa non bổ sung kháng thể cao cấp.</em></p>
-            </div>
-            <div class="macro-box">
-                <p>🥑 <strong>Chất béo (Fat): ${Math.round(fatG)}g</strong> (${Math.round(fatCals)} calo)</p>
-                <p><em>Gợi ý: Dầu olive, quả bơ, cá hồi, hạt hạnh nhân, óc chó.</em></p>
-            </div>
+            <p style="text-align:center; font-size: 13px; margin-top:10px;"><i>(Số gam trên là trọng lượng khô/sống của thực phẩm)</i></p>
         `;
+        
+        // Cuộn xuống kết quả
+        document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
     }
 </script>
 
